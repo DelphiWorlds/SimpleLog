@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{B1096725-AFA7-4731-90C9-7D66988CB08D}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Demos\FMX\SimpleLogDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="SysLogViewer\SysLogViewer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="SysLogRelay\FMX\SysLogRelay.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="SimpleLogDemo">
+        <MSBuild Projects="Demos\FMX\SimpleLogDemo.dproj"/>
+    </Target>
+    <Target Name="SimpleLogDemo:Clean">
+        <MSBuild Projects="Demos\FMX\SimpleLogDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SimpleLogDemo:Make">
+        <MSBuild Projects="Demos\FMX\SimpleLogDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="SysLogViewer">
+        <MSBuild Projects="SysLogViewer\SysLogViewer.dproj"/>
+    </Target>
+    <Target Name="SysLogViewer:Clean">
+        <MSBuild Projects="SysLogViewer\SysLogViewer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SysLogViewer:Make">
+        <MSBuild Projects="SysLogViewer\SysLogViewer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="SysLogRelay">
+        <MSBuild Projects="SysLogRelay\FMX\SysLogRelay.dproj"/>
+    </Target>
+    <Target Name="SysLogRelay:Clean">
+        <MSBuild Projects="SysLogRelay\FMX\SysLogRelay.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SysLogRelay:Make">
+        <MSBuild Projects="SysLogRelay\FMX\SysLogRelay.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="SimpleLogDemo;SysLogViewer;SysLogRelay"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="SimpleLogDemo:Clean;SysLogViewer:Clean;SysLogRelay:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="SimpleLogDemo:Make;SysLogViewer:Make;SysLogRelay:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

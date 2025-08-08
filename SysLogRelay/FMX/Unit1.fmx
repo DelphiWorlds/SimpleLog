@@ -1,0 +1,86 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'SysLog Relay'
+  ClientHeight = 172
+  ClientWidth = 360
+  Padding.Left = 6.000000000000000000
+  Padding.Top = 6.000000000000000000
+  Padding.Right = 6.000000000000000000
+  Padding.Bottom = 6.000000000000000000
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object btnStartStop: TButton
+    Action = actStartStop
+    Align = Bottom
+    ImageIndex = -1
+    Position.X = 6.000000000000000000
+    Position.Y = 133.000000000000000000
+    Size.Width = 348.000000000000000000
+    Size.Height = 33.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    TextSettings.Trimming = None
+  end
+  object SysLogLayout: TLayout
+    Align = Top
+    Position.X = 6.000000000000000000
+    Position.Y = 6.000000000000000000
+    Size.Width = 348.000000000000000000
+    Size.Height = 67.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object SysLogServerLayout: TLayout
+      Align = Top
+      Size.Width = 348.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object SysLogServerLabel: TLabel
+        Align = Left
+        Size.Width = 81.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Server:'
+        TabOrder = 0
+      end
+      object SysLogServerEdit: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Align = VertCenter
+        TabOrder = 1
+        Position.X = 81.000000000000000000
+        Position.Y = 5.000000000000000000
+        Size.Width = 267.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+    end
+    object EncryptedLayout: TLayout
+      Align = Top
+      Position.Y = 33.000000000000000000
+      Size.Width = 348.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object EncryptedCheckBox: TCheckBox
+        Align = Left
+        Size.Width = 120.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Text = 'Encrypted'
+      end
+    end
+  end
+  object aclMain: TActionList
+    Left = 104
+    Top = 52
+    object actStartStop: TAction
+      Text = 'Start'
+      OnExecute = actStartStopExecute
+      OnUpdate = actStartStopUpdate
+    end
+  end
+end
