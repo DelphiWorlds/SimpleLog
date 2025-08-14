@@ -47,7 +47,9 @@ Similar to `DW.OSLog` from [Kastri](https://github.com/DelphiWorlds/Kastri) (in 
 
 ### System logging
 
-Simply add `SimpleLog.Log` to the uses clause of the unit(s) where you need logging, and add calls to the logging methods (described above). See the [Viewing operating system logs](#viewing-operating-system-logs) section for more information on how to view the logs on your platform.
+Simply add `SimpleLog.Log` to the uses clause of the unit(s) where you need logging, and add calls to the logging methods (described above). NOTE: Since the `FMX.Types` unit also has a reference called `Log`,if you are using that unit you will need to ensure that `SimpleLog.Log` is added to the uses clause **AFTER** `FMX.Types`.
+
+See the [Viewing operating system logs](#viewing-operating-system-logs) section for more information on how to view the logs on your platform.
 
 ### File logging
 
