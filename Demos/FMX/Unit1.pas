@@ -92,6 +92,7 @@ procedure TForm1.LogMethodButtonClick(Sender: TObject);
 begin
   Log.m('TForm1.LogMethodButtonClick', []);
   Log.i('The caption of the form is: %s', [Caption]);
+  Log.e('This is just an error example');
 end;
 
 procedure TForm1.UpdateSysLogButtonClick(Sender: TObject);
