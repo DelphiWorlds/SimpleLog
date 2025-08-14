@@ -49,9 +49,11 @@ object MainView: TMainView
     Size.Height = 811.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
+    OnDrawColumnHeader = LogGridDrawColumnHeader
+    OnDrawColumnBackground = LogGridDrawColumnBackground
     OnResized = LogGridResized
-    Viewport.Width = 1404.000000000000000000
-    Viewport.Height = 811.000000000000000000
+    Viewport.Width = 1384.000000000000000000
+    Viewport.Height = 786.000000000000000000
     object TimeColumn: TStringColumn
       Header = 'Time'
       HeaderSettings.TextSettings.WordWrap = False
@@ -109,6 +111,19 @@ object MainView: TMainView
       Text = 'Clear'
       TextSettings.Trimming = None
       OnClick = ClearGridButtonClick
+    end
+    object AutoScrollCheckBox: TCheckBox
+      Align = Right
+      IsChecked = True
+      Margins.Right = 12.000000000000000000
+      Position.X = 1308.000000000000000000
+      Position.Y = 4.000000000000000000
+      Size.Width = 88.000000000000000000
+      Size.Height = 29.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'Auto Scroll'
+      TextSettings.HorzAlign = Trailing
     end
   end
 end
