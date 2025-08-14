@@ -34,7 +34,6 @@ type
   ILogProvider = interface(IInterface)
     ['{F9E573BC-EAD3-44AB-A59F-25FAD7DBD2B2}']
     procedure Log(const ALevel: TLogLevel; const AMessage: string);
-    // property IsEnabled: Boolean;
   end;
 
   IMethodLog = interface(IInterface)
