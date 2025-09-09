@@ -86,7 +86,7 @@ begin
       TJLog.JavaClass.e(LTag, LMessage);
     TLogLevel.Fatal:
       TJLog.JavaClass.wtf(LTag, LMessage);
-    TLogLevel.Info:
+    TLogLevel.Info, TLogLevel.Trace:
       TJLog.JavaClass.i(LTag, LMessage);
     TLogLevel.Warning:
       TJLog.JavaClass.w(LTag, LMessage);
