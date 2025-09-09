@@ -27,14 +27,17 @@ type
     FCipher: ICipher;
   protected
     procedure SetCipher(const ACipher: ICipher);
+    property Cipher: ICipher read FCipher;
   public
     procedure SendBuffer(const AHost: string; const APort: TIdPort; const AIPVersion: TIdIPVersion; const ABuffer : TIdBytes); override;
   end;
 
   ISysLogProvider = interface(ILogProvider)
     ['{483C82CC-A143-4720-80D8-BB55131463DC}']
+    function GetCipher: ICipher;
     procedure SetCipher(const ACipher: ICipher);
     procedure SetServer(const AHost: string; const APort: Word = cPortSysLogDefault);
+    property Cipher: ICipher read GetCipher write SetCipher;
   end;
 
   TSysLogProvider = class(TInterfacedObject, ILogProvider, ISysLogProvider)
@@ -47,6 +50,7 @@ type
     { ILogProvider }
     procedure Log(const ALevel: TLogLevel; const AMessage: string);
     { ISysLogProvider }
+    function GetCipher: ICipher;
     procedure SetCipher(const ACipher: ICipher);
     procedure SetServer(const AHost: string; const APort: Word = cPortSysLogDefault);
   public
@@ -85,6 +89,8 @@ end;
 
 procedure TIdSysLogEx.SetCipher(const ACipher: ICipher);
 begin
+  if FCipher <> ACipher then
+    FCipher := nil;
   FCipher := ACipher;
 end;
 
@@ -107,6 +113,11 @@ end;
 function TSysLogProvider.GetAppName: string;
 begin
   Result := TPath.GetFileNameWithoutExtension(TPath.GetFileName(ParamStr(0)));
+end;
+
+function TSysLogProvider.GetCipher: ICipher;
+begin
+  Result := FSysLog.Cipher;
 end;
 
 {$IF Defined(MSWINDOWS)}
@@ -174,7 +185,7 @@ begin
   LSysLogMessage := TIdSysLogMessage.Create(nil);
   try
     LSysLogMessage.TimeStamp := Now;
-    LSysLogMessage.Hostname := GetDeviceName;
+    LSysLogMessage.Hostname := GetDeviceName.Replace(' ', '_', [rfReplaceAll]);
     LSysLogMessage.Msg.Text := '<' + ALevel.AsString + '>: ' + AMessage;
     LSysLogMessage.Msg.Process := FAppName;
     case ALevel of
