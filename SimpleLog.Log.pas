@@ -66,6 +66,7 @@ var
 implementation
 
 uses
+  System.Diagnostics,
   {$IF Defined(MSWINDOWS)}
   // This uses clause is here only to prevent an error on shutdown on Windows when using TSysLogProvider
   // If you know why it helps, please let me know
@@ -86,6 +87,7 @@ type
   private
     FLogLevel: TLogLevel;
     FMessage: string;
+    FStopWatch: TStopWatch;
   public
     constructor Create(const ALevel: TLogLevel; const AMessage: string);
     destructor Destroy; override;
@@ -100,6 +102,7 @@ type
 
   TLog = class(TInterfacedObject, ILog, IMethodLogCallback)
   private
+    FPlatformLogProvider: ILogProvider;
     FProviders: TLogProviders;
     FTag: string;
     function DoLog(const ALevel: TLogLevel; const AFmt: string; const AParams: array of const): IMethodLog;
@@ -138,7 +141,8 @@ end;
 constructor TLog.Create;
 begin
   inherited;
-  AddProvider(TPlatformLogProvider.Create);
+  FPlatformLogProvider := TPlatformLogProvider.Create;
+  AddProvider(FPlatformLogProvider);
 end;
 
 procedure TLog.AddProvider(const AProvider: ILogProvider);
@@ -179,7 +183,11 @@ begin
   try
     LProvider.Log(ALevel, AMessage);
   except
-    // Eat any exceptions that providers cause
+    on E: Exception do
+    begin
+      if LProvider <> FPlatformLogProvider then
+        FPlatformLogProvider.Log(TLogLevel.Error, Format('%s: %s', [E.ClassName, E.Message]));
+    end;
   end;
 end;
 
@@ -250,11 +258,12 @@ begin
   inherited Create;
   FLogLevel := ALevel;
   FMessage := AMessage;
+  FStopWatch := TStopWatch.StartNew;
 end;
 
 destructor TMethodLog.Destroy;
 begin
-  (Log as IMethodLogCallback).Log(FLogLevel, FMessage);
+  (Log as IMethodLogCallback).Log(FLogLevel, FMessage + Format(' [%s ms]', [FStopWatch.Elapsed.TotalMilliseconds.ToString]));
   inherited;
 end;
 
