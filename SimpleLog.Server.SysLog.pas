@@ -15,12 +15,13 @@ interface
 
 uses
   IdSysLogMessage,
-  SimpleLog.Log;
+  SimpleLog.Log,
+  SimpleLog.Indy;
 
 type
   ISysLogServerListener = interface(IInterface)
     ['{36615B48-134F-4CCE-8C9C-0A64DC0AB3FD}']
-    procedure ReceivedMessage(const AMessage: TIdSysLogMessage);
+    procedure ReceivedMessage(const AMessage: TIdSysLogMessageEx);
   end;
 
   ISysLogServer = interface(IInterface)
@@ -41,8 +42,7 @@ var
 implementation
 
 uses
-  IdSocketHandle,
-  SimpleLog.Indy;
+  IdSocketHandle;
 
 type
   TSysLogServerListeners = TArray<ISysLogServerListener>;
@@ -112,7 +112,7 @@ var
 begin
   for LListener in FListeners do
   try
-    LListener.ReceivedMessage(ASysLogMessage);
+    LListener.ReceivedMessage(TIdSysLogMessageEx(ASysLogMessage));
   except
     // Eat any exceptions a listener might cause
   end;

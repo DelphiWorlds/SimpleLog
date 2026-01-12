@@ -13,10 +13,12 @@ unit SimpleLog.Provider.SysLog;
 
 interface
 
+{$SCOPEDENUMS ON}
+
 uses
   System.SysUtils,
   IdSysLog, IdSysLogMessage, IdGlobal,
-  SimpleLog.Log;
+  SimpleLog.Log, SimpleLog.Indy;
 
 const
   cPortSysLogDefault = 514;
@@ -35,14 +37,19 @@ type
   ISysLogProvider = interface(ILogProvider)
     ['{483C82CC-A143-4720-80D8-BB55131463DC}']
     function GetCipher: ICipher;
+    function GetDeviceID: string;
     procedure SetCipher(const ACipher: ICipher);
+    procedure SetDeviceID(const ADeviceID: string);
     procedure SetServer(const AHost: string; const APort: Word = cPortSysLogDefault);
     property Cipher: ICipher read GetCipher write SetCipher;
+    property DeviceID: string read GetDeviceID write SetDeviceID;
   end;
 
   TSysLogProvider = class(TInterfacedObject, ILogProvider, ISysLogProvider)
   private
     FAppName: string;
+    FDeviceID: string;
+    FRFC: TSysLogRFC;
     FSysLog : TIdSysLogEx;
     function GetAppName: string;
     function GetDeviceName: string;
@@ -51,7 +58,9 @@ type
     procedure Log(const ALevel: TLogLevel; const AMessage: string);
     { ISysLogProvider }
     function GetCipher: ICipher;
+    function GetDeviceID: string;
     procedure SetCipher(const ACipher: ICipher);
+    procedure SetDeviceID(const ADeviceID: string);
     procedure SetServer(const AHost: string; const APort: Word = cPortSysLogDefault);
   public
     constructor Create(const AHost: string; const APort: Word = cPortSysLogDefault);
@@ -61,7 +70,10 @@ type
 implementation
 
 uses
-  System.IOUtils,
+  System.IOUtils, System.DateUtils,
+  {$IF Defined(POSIX)}
+  Posix.Unistd,
+  {$ENDIF}
   {$IF Defined(MACOS)}
   Macapi.Helpers,
   {$ENDIF}
@@ -76,6 +88,15 @@ uses
   {$ELSEIF Defined(LINUX)}
   Posix.UniStd;
   {$ENDIF}
+
+function GetProcessId: UInt32;
+begin
+  {$IFDEF MSWINDOWS}
+  Result := GetCurrentProcessId;
+  {$ELSE}
+  Result := getpid;
+  {$ENDIF}
+end;
 
 { TIdSysLogEx }
 
@@ -99,6 +120,7 @@ end;
 constructor TSysLogProvider.Create(const AHost: string; const APort: Word = cPortSysLogDefault);
 begin
   inherited Create;
+  FRFC := TSysLogRFC.RFC5424;
   FAppName := GetAppName;
   FSysLog := TIdSysLogEx.Create(nil);
   SetServer(AHost, APort);
@@ -118,6 +140,11 @@ end;
 function TSysLogProvider.GetCipher: ICipher;
 begin
   Result := FSysLog.Cipher;
+end;
+
+function TSysLogProvider.GetDeviceID: string;
+begin
+  Result := FDeviceID;
 end;
 
 {$IF Defined(MSWINDOWS)}
@@ -172,6 +199,11 @@ begin
   FSysLog.SetCipher(ACipher);
 end;
 
+procedure TSysLogProvider.SetDeviceID(const ADeviceID: string);
+begin
+  FDeviceID := ADeviceID;
+end;
+
 procedure TSysLogProvider.SetServer(const AHost: string; const APort: Word = cPortSysLogDefault);
 begin
   FSysLog.Host := AHost;
@@ -180,14 +212,16 @@ end;
 
 procedure TSysLogProvider.Log(const ALevel: TLogLevel; const AMessage: string);
 var
-  LSysLogMessage: TIdSysLogMessage;
+  LSysLogMessage: TIdSysLogMessageEx;
 begin
-  LSysLogMessage := TIdSysLogMessage.Create(nil);
+  LSysLogMessage := TIdSysLogMessageEx.Create(nil);
   try
+    LSysLogMessage.RFC := FRFC;
     LSysLogMessage.TimeStamp := Now;
-    LSysLogMessage.Hostname := GetDeviceName.Replace(' ', '_', [rfReplaceAll]);
-    LSysLogMessage.Msg.Text := '<' + ALevel.AsString + '>: ' + AMessage;
+    LSysLogMessage.Hostname := FDeviceID;
+    LSysLogMessage.Msg.Content := '<' + ALevel.AsString + '>: ' + AMessage;
     LSysLogMessage.Msg.Process := FAppName;
+    LSysLogMessage.Msg.PID := GetProcessId;
     case ALevel of
       TLogLevel.Debug:
         LSysLogMessage.Severity := TIdSyslogSeverity.slDebug;
