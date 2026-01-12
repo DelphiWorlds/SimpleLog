@@ -57,7 +57,7 @@ uses
 class function TFileLogSettings.Defaults: TFileLogSettings;
 begin
   Result.FileNameExt := '.log';
-  Result.FileNameDateTimeFormat := 'yyyy-dd-mm';
+  Result.FileNameDateTimeFormat := 'yyyy-mm-dd';
   Result.CreationOption := TFileLogCreationOption.NewOnDayChange;
 end;
 
